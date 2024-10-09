@@ -1,10 +1,12 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:wildgids/models/services/auth.dart';
+import 'package:wildgids/views/home/home.dart';
 
 class VerificationPage extends StatefulWidget {
   final String email;
+
   const VerificationPage({
     super.key,
     required this.email,
@@ -15,31 +17,24 @@ class VerificationPage extends StatefulWidget {
 }
 
 class _VerificationPageState extends State<VerificationPage> {
-  final TextEditingController _controller1 = TextEditingController();
-  final TextEditingController _controller2 = TextEditingController();
-  final TextEditingController _controller3 = TextEditingController();
-  final TextEditingController _controller4 = TextEditingController();
-  final TextEditingController _controller5 = TextEditingController();
-  final TextEditingController _controller6 = TextEditingController();
-
+  final List<TextEditingController> _controllers =
+      List.generate(6, (_) => TextEditingController());
+  final _formKey = GlobalKey<FormState>();
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   @override
   void dispose() {
-    _controller1.dispose();
-    _controller2.dispose();
-    _controller3.dispose();
-    _controller4.dispose();
-    _controller5.dispose();
-    _controller6.dispose();
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
     for (var focusNode in _focusNodes) {
       focusNode.dispose();
     }
     super.dispose();
   }
 
-  void _nextField(String value, int currentIndex) {
-    if (value.isNotEmpty && currentIndex < _focusNodes.length - 1) {
+  void _nextField(int currentIndex) {
+    if (currentIndex < _focusNodes.length - 1) {
       _focusNodes[currentIndex + 1].requestFocus();
     }
   }
@@ -84,22 +79,20 @@ class _VerificationPageState extends State<VerificationPage> {
               ),
             ),
             const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildCodeInputBox(_controller1, 0),
-                _buildCodeInputBox(_controller2, 1),
-                _buildCodeInputBox(_controller3, 2),
-                _buildCodeInputBox(_controller4, 3),
-                _buildCodeInputBox(_controller5, 4),
-                _buildCodeInputBox(_controller6, 5),
-              ],
+            Form(
+              key: _formKey,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(6, (index) {
+                  return _buildCodeInputBox(_controllers[index], index);
+                }),
+              ),
             ),
             const SizedBox(height: 24),
             Center(
               child: GestureDetector(
                 onTap: () {
-                  // ƒTODO: Handle resend code
+                  AuthService().authenticate(widget.email, "", "");
                 },
                 child: const Text(
                   'Did not receive a code? Send new email',
@@ -113,8 +106,28 @@ class _VerificationPageState extends State<VerificationPage> {
             const SizedBox(height: 24),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Handle verification
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    final code = _controllers
+                        .map((controller) => controller.text.trim())
+                        .join();
+
+                    if ((await AuthService().authorize(widget.email, code))
+                        .isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Authorization failed. Please try again.')),
+                      );
+                    }
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   padding:
@@ -146,12 +159,12 @@ class _VerificationPageState extends State<VerificationPage> {
         textAlign: TextAlign.center,
         onChanged: (value) {
           if (value.isNotEmpty) {
-            _nextField(value, index);
+            _nextField(index);
           } else {
             _previousField(index);
           }
         },
-        onSubmitted: (_) => _nextField(controller.text, index),
+        onSubmitted: (_) => _nextField(index),
         decoration: InputDecoration(
           counterText: "",
           enabledBorder: OutlineInputBorder(

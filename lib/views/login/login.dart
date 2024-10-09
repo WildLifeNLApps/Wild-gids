@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:wildgids/models/services/auth.dart';
 import 'package:wildgids/views/login/verfication.dart';
 
 class LoginPage extends StatefulWidget {
@@ -78,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                         if (_formKey.currentState!.validate()) {
                           final email = _emailController.text;
 
-                          // TODO: Add API call to send email
+                          AuthService().authenticate(email, "", "");
 
                           Navigator.push(
                             context,
