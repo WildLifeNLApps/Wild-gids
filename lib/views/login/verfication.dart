@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class VerificationPage extends StatefulWidget {
   final String email;
@@ -98,7 +99,7 @@ class _VerificationPageState extends State<VerificationPage> {
             Center(
               child: GestureDetector(
                 onTap: () {
-                  // TODO: Handle resend code
+                  // ƒTODO: Handle resend code
                 },
                 child: const Text(
                   'Did not receive a code? Send new email',
@@ -146,10 +147,11 @@ class _VerificationPageState extends State<VerificationPage> {
         onChanged: (value) {
           if (value.isNotEmpty) {
             _nextField(value, index);
-          } else if (value.isEmpty && _focusNodes[index].hasFocus) {
+          } else {
             _previousField(index);
           }
         },
+        onSubmitted: (_) => _nextField(controller.text, index),
         decoration: InputDecoration(
           counterText: "",
           enabledBorder: OutlineInputBorder(
