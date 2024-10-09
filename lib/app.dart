@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wildgids/config/theme/custom_theme.dart';
+import 'package:wildgids/views/login/login.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -36,7 +37,6 @@ class _InitializerState extends State<Initializer> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Center(child: Text("Hello world")));
+        resizeToAvoidBottomInset: false, body: Center(child: LoginPage()));
   }
 }
