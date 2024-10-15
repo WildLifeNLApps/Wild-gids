@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wildlife_api_connection/api_client.dart';
 import 'package:wildlife_api_connection/auth_api.dart';
@@ -20,7 +21,7 @@ class AuthService {
 
       return Map<String, dynamic>.from(response);
     } catch (e) {
-      print('Authentication failed: $e');
+      debugPrint('Authentication failed: $e');
       throw Exception('Authentication failed: $e');
     }
   }
@@ -37,7 +38,7 @@ class AuthService {
 
       return response;
     } catch (e) {
-      print('Authorize failed: $e');
+      debugPrint('Authorize failed: $e');
       throw Exception('Authorize failed: $e');
     }
   }
@@ -47,7 +48,7 @@ class AuthService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       return prefs.getString('bearer_token');
     } catch (e) {
-      print('Failed to get bearer token: $e');
+      debugPrint('Failed to get bearer token: $e');
       throw Exception('Failed to get bearer token: $e');
     }
   }

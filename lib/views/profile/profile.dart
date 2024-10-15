@@ -16,10 +16,19 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isLoading = true;
   String _errorMessage = "";
 
+  final TextEditingController _controller = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
+
   @override
   void initState() {
     super.initState();
     _fetchProfileInfo();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchProfileInfo() async {
@@ -92,6 +101,80 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
           const SizedBox(height: 20),
         ],
+        InkWell(
+          onTap: () async {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Enter your name'),
+                  content: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Name cannot be empty';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          await UserService().updateMyProfile(
+                            _controller.text.trim(),
+                          );
+                          setState(() {
+                            _fetchProfileInfo();
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              color: Colors.grey,
+            ),
+            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+            height: 70,
+            width: double.maxFinite,
+            child: const Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Update account",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
         InkWell(
           onTap: () {
             // TODO: Add logout functionality
