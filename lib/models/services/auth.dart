@@ -1,4 +1,4 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wildlife_api_connection/api_client.dart';
 import 'package:wildlife_api_connection/auth_api.dart';
 import 'package:wildlife_api_connection/models/user.dart';
@@ -7,7 +7,6 @@ class AuthService {
   final _authApi = AuthApi(
     ApiClient("https://wildlifenl-uu-michi011.apps.cl01.cp.its.uu.nl/auth"),
   );
-  final _storage = new FlutterSecureStorage();
 
   Future<Map<String, dynamic>> authenticate(
     String email,
@@ -36,7 +35,6 @@ class AuthService {
         code,
       );
 
-      await _storage.write(key: "bearerToken", value: response.id);
       return response;
     } catch (e) {
       print('Authorize failed: $e');
@@ -46,7 +44,8 @@ class AuthService {
 
   Future<String?> getBearerToken() async {
     try {
-      return await _storage.read(key: "bearerToken");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString('bearer_token');
     } catch (e) {
       print('Failed to get bearer token: $e');
       throw Exception('Failed to get bearer token: $e');

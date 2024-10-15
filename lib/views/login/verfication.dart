@@ -1,8 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:wildgids/app.dart';
 import 'package:wildgids/models/services/auth.dart';
-import 'package:wildgids/views/home/home.dart';
 import 'package:wildgids/views/widgets/custom_scaffold.dart';
 
 class VerificationPage extends StatefulWidget {
@@ -118,7 +118,7 @@ class _VerificationPageState extends State<VerificationPage> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HomePage(),
+                      builder: (context) => const Initializer(),
                     ),
                   );
                 }

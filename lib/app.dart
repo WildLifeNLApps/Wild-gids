@@ -41,7 +41,7 @@ class _InitializerState extends State<Initializer> {
 
   Future<bool> _checkUserLoginStatus() async {
     String? token = await _getBearerToken();
-    return token != null;
+    return token != null && token != "";
   }
 
   Future<String?> _getBearerToken() async {
