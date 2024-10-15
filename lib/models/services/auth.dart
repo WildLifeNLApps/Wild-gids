@@ -1,5 +1,6 @@
 import 'package:wildlife_api_connection/api_client.dart';
 import 'package:wildlife_api_connection/auth_api.dart';
+import 'package:wildlife_api_connection/models/user.dart';
 
 class AuthService {
   final _authApi = AuthApi(
@@ -9,12 +10,10 @@ class AuthService {
   Future<Map<String, dynamic>> authenticate(
     String email,
     String? displayNameApp,
-    String? displayNameUser,
   ) async {
     try {
       final response = await _authApi.authenticate(
         displayNameApp ?? "",
-        displayNameUser ?? "",
         email,
       );
       return Map<String, dynamic>.from(response);
@@ -24,7 +23,7 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> authorize(
+  Future<User> authorize(
     String email,
     String code,
   ) async {
@@ -33,7 +32,7 @@ class AuthService {
         email,
         code,
       );
-      return Map<String, dynamic>.from(response);
+      return response;
     } catch (e) {
       print('Authorize failed: $e');
       throw Exception('Authorize failed: $e');

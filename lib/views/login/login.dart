@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
+      selectedIndex: -1,
       body: Column(
         children: [
           const Text(
@@ -77,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                     if (_formKey.currentState!.validate()) {
                       final email = _emailController.text;
 
-                      AuthService().authenticate(email, "", "");
+                      AuthService().authenticate(email, "");
 
                       Navigator.push(
                         context,
