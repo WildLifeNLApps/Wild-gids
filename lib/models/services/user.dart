@@ -1,4 +1,5 @@
 import 'package:wildlife_api_connection/api_client.dart';
+import 'package:wildlife_api_connection/models/user.dart';
 import 'package:wildlife_api_connection/profile_api.dart';
 
 class UserService {
@@ -7,7 +8,7 @@ class UserService {
         "https://wildlifenl-uu-michi011.apps.cl01.cp.its.uu.nl/profile/me"),
   );
 
-  Future<Map<String, dynamic>> getMyProfile() async {
+  Future<User> getMyProfile() async {
     try {
       final response = await _profileApi.getMyProfile();
       return response;

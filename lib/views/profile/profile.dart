@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:wildgids/models/services/user.dart';
+import 'package:wildlife_api_connection/models/user.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -11,8 +12,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String _profileInfo = "Loading...";
+  User? _profile;
   bool _isLoading = true;
+  String _errorMessage = "";
 
   @override
   void initState() {
@@ -24,12 +26,12 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final profile = await UserService().getMyProfile();
       setState(() {
-        _profileInfo = profile.entries.first.toString();
+        _profile = profile;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _profileInfo = "Error loading profile";
+        _errorMessage = "Error loading profile";
         _isLoading = false;
       });
     }
@@ -55,17 +57,44 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         const SizedBox(height: 20),
-        _isLoading
-            ? const CircularProgressIndicator()
-            : Text(
-                _profileInfo,
+        if (_isLoading) ...[
+          const CircularProgressIndicator()
+        ] else ...[
+          if (_errorMessage.isNotEmpty) ...[
+            Text(
+              _errorMessage,
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            )
+          ] else ...[
+            Text(
+              "User ID: ${_profile!.id}",
+              style: const TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            if (_profile!.name != null && _profile!.name != "") ...[
+              Text(
+                "Name: ${_profile!.name}",
                 style: const TextStyle(
                   fontSize: 20,
                 ),
               ),
+            ],
+            Text(
+              "Email: ${_profile!.email}",
+              style: const TextStyle(
+                fontSize: 20,
+              ),
+            ),
+          ],
+          const SizedBox(height: 20),
+        ],
         InkWell(
           onTap: () {
-            // TODO: Add functionality
+            // TODO: Add logout functionality
           },
           child: Container(
             decoration: const BoxDecoration(
@@ -95,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         InkWell(
           onTap: () {
-            // TODO: Add functionality
+            // TODO: Add account deletion functionality
           },
           child: Container(
             decoration: const BoxDecoration(
