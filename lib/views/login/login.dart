@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
+      isAuthenticated: true,
       selectedIndex: -1,
       body: Column(
         children: [

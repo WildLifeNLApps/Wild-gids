@@ -50,6 +50,7 @@ class _VerificationPageState extends State<VerificationPage> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       selectedIndex: -1,
+      isAuthenticated: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

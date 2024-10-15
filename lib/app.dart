@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wildgids/config/theme/custom_theme.dart';
+import 'package:wildgids/models/services/auth.dart';
 import 'package:wildgids/views/login/login.dart';
+import 'package:wildgids/views/widgets/custom_scaffold.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -29,14 +31,50 @@ class Initializer extends StatefulWidget {
 }
 
 class _InitializerState extends State<Initializer> {
+  Future<bool>? _isUserLoggedIn;
+
   @override
   void initState() {
     super.initState();
+    _isUserLoggedIn = _checkUserLoginStatus();
+  }
+
+  Future<bool> _checkUserLoginStatus() async {
+    String? token = await _getBearerToken();
+    return token != null;
+  }
+
+  Future<String?> _getBearerToken() async {
+    return await AuthService().getBearerToken();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        resizeToAvoidBottomInset: false, body: Center(child: LoginPage()));
+    return FutureBuilder<bool>(
+      future: _isUserLoggedIn,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return const Scaffold(
+            body: Center(
+              child: Text("Something went wrong"),
+            ),
+          );
+        } else if (snapshot.data != null && snapshot.data == true) {
+          return CustomScaffold(selectedIndex: 0, body: const Center());
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: LoginPage(),
+            ),
+          );
+        }
+      },
+    );
   }
 }
