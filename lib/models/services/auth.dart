@@ -24,7 +24,7 @@ class AuthService {
   ) async {
     try {
       final response = await _authApi.authenticate(
-        displayNameApp ?? "",
+        displayNameApp,
         email,
       );
 
