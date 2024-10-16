@@ -68,9 +68,11 @@ class _InitializerState extends State<Initializer> {
         } else if (snapshot.data != null && snapshot.data == true) {
           return CustomScaffold(selectedIndex: 0, body: const Center());
         } else {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
-              child: LoginPage(),
+              child: LoginPage(
+                authService: AuthService(),
+              ),
             ),
           );
         }

@@ -7,10 +7,12 @@ import 'package:wildgids/views/widgets/custom_scaffold.dart';
 
 class VerificationPage extends StatefulWidget {
   final String email;
+  final AuthService authService;
 
   const VerificationPage({
     super.key,
     required this.email,
+    required this.authService,
   });
 
   @override
@@ -113,7 +115,7 @@ class _VerificationPageState extends State<VerificationPage> {
                       .map((controller) => controller.text.trim())
                       .join();
 
-                  await AuthService().authorize(widget.email, code);
+                  await widget.authService.authorize(widget.email, code);
 
                   Navigator.pushReplacement(
                     context,

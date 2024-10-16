@@ -6,8 +6,11 @@ import 'package:wildgids/views/login/verfication.dart';
 import 'package:wildgids/views/widgets/custom_scaffold.dart';
 
 class LoginPage extends StatefulWidget {
+  final AuthService authService;
+
   const LoginPage({
     super.key,
+    required this.authService,
   });
 
   @override
@@ -75,17 +78,18 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialButton(
                   minWidth: double.maxFinite,
                   color: Colors.grey,
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final email = _emailController.text;
 
-                      AuthService().authenticate(email, "");
+                      await widget.authService.authenticate(email, "");
 
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => VerificationPage(
                             email: email,
+                            authService: widget.authService,
                           ),
                         ),
                       );
