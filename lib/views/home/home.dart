@@ -1,53 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:wildgids/views/widgets/custom_scaffold.dart';
+import 'package:wildgids/config/theme/asset_icons.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-        isAuthenticated: true,
-        selectedIndex: -1,
-        body: Column(children: [
-          const Text(
-            "Home",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-              height: 500,
-              child: FlutterMap(
-                mapController: MapController(),
-                options: const MapOptions(
-                  initialCenter: LatLng(51.25851739912562,
-                      5.622422796819703), // Center the map over London
-                  initialZoom: 11,
-                ),
-                children: [
-                  TileLayer(
-                    // Display map tiles from any source
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
-                    userAgentPackageName: 'com.example.app',
-                  ),
-                  RichAttributionWidget(
-                    // Include a stylish prebuilt attribution widget that meets all requirments
-                    attributions: [
-                      TextSourceAttribution(
-                        'OpenStreetMap contributors',
-                        onTap: () => launchUrl(Uri.parse(
-                            'https://openstreetmap.org/copyright')), // (external)
-                      ),
-                    ],
-                  ),
-                ],
-              ))
-        ]));
+    const startingPoint = LatLng(51.25851739912562, 5.622422796819703);
+
+    return FlutterMap(
+      mapController: MapController(),
+      options: MapOptions(
+          initialCenter: startingPoint, // Center the map over Weerterbos
+          initialZoom: 11,
+
+          // Set map zoom and location boundaries
+          minZoom: 9,
+          maxZoom: 18,
+          cameraConstraint: CameraConstraint.contain(
+              bounds: LatLngBounds(const LatLng(52.25851, 6.6224),
+                  const LatLng(50.25851, 4.6224)))),
+      children: [
+        TileLayer(
+          // Display map tiles from any source
+          urlTemplate:
+              'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
+          userAgentPackageName: 'com.wildlifenl.wildgids',
+        ),
+        MarkerLayer(markers: [
+          Marker(
+              point: startingPoint,
+              width: 30,
+              height: 30,
+              child: SvgPicture.asset(AssetIcons.locationDot),
+              rotate: true),
+        ])
+      ],
+    );
   }
 }
