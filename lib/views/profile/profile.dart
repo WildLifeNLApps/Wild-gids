@@ -119,6 +119,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         if (value == null || value.isEmpty) {
                           return 'Name cannot be empty';
                         }
+
+                        String pattern = r'^[A-Za-z\s]+$';
+                        RegExp regex = RegExp(pattern);
+
+                        if (!regex.hasMatch(value)) {
+                          return 'Name cannot consist of number or characters';
+                        }
                         return null;
                       },
                     ),
