@@ -1,20 +1,21 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:wildgids/models/services/auth.dart';
 import 'package:wildgids/views/login/verfication.dart';
 import 'package:wildgids/views/widgets/custom_scaffold.dart';
 
 class LoginPage extends StatefulWidget {
+  final AuthService authService;
+
   const LoginPage({
     super.key,
+    required this.authService,
   });
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -28,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
+      isAuthenticated: true,
+      selectedIndex: -1,
       body: Column(
         children: [
           const Text(
@@ -73,17 +76,18 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialButton(
                   minWidth: double.maxFinite,
                   color: Colors.grey,
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final email = _emailController.text;
+                      await widget.authService.authenticate(email, "");
 
-                      AuthService().authenticate(email, "", "");
-
+                      if (!context.mounted) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => VerificationPage(
                             email: email,
+                            authService: widget.authService,
                           ),
                         ),
                       );

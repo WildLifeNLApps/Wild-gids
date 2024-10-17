@@ -1,22 +1,23 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
+import 'package:wildgids/app.dart';
 import 'package:wildgids/models/services/auth.dart';
-import 'package:wildgids/views/home/home.dart';
+import 'package:wildgids/views/widgets/custom_scaffold.dart';
 
 class VerificationPage extends StatefulWidget {
   final String email;
+  final AuthService authService;
 
   const VerificationPage({
     super.key,
     required this.email,
+    required this.authService,
   });
 
   @override
-  _VerificationPageState createState() => _VerificationPageState();
+  VerificationPageState createState() => VerificationPageState();
 }
 
-class _VerificationPageState extends State<VerificationPage> {
+class VerificationPageState extends State<VerificationPage> {
   final List<TextEditingController> _controllers =
       List.generate(6, (_) => TextEditingController());
   final _formKey = GlobalKey<FormState>();
@@ -47,7 +48,9 @@ class _VerificationPageState extends State<VerificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
+      selectedIndex: -1,
+      isAuthenticated: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -58,92 +61,82 @@ class _VerificationPageState extends State<VerificationPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Enter code',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Enter code',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 8),
-            Text(
-              'An email has been sent to: ${widget.email}',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'An email has been sent to: ${widget.email}',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
             ),
-            const SizedBox(height: 32),
-            Form(
-              key: _formKey,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) {
-                  return _buildCodeInputBox(_controllers[index], index);
-                }),
-              ),
+          ),
+          const SizedBox(height: 32),
+          Form(
+            key: _formKey,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(6, (index) {
+                return _buildCodeInputBox(_controllers[index], index);
+              }),
             ),
-            const SizedBox(height: 24),
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  AuthService().authenticate(widget.email, "", "");
-                },
-                child: const Text(
-                  'Did not receive a code? Send new email',
-                  style: TextStyle(
-                    color: Colors.purple,
-                    fontWeight: FontWeight.bold,
-                  ),
+          ),
+          const SizedBox(height: 24),
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                AuthService().authenticate(widget.email, "");
+              },
+              child: const Text(
+                'Did not receive a code? Send new email',
+                style: TextStyle(
+                  color: Colors.purple,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final code = _controllers
-                        .map((controller) => controller.text.trim())
-                        .join();
+          ),
+          const SizedBox(height: 24),
+          Center(
+            child: ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final code = _controllers
+                      .map((controller) => controller.text.trim())
+                      .join();
+                  await widget.authService.authorize(widget.email, code);
 
-                    if ((await AuthService().authorize(widget.email, code))
-                        .isNotEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Authorization failed. Please try again.')),
-                      );
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Login',
-                  style: TextStyle(fontSize: 16),
+                  if (!context.mounted) return;
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Initializer(),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
+              child: const Text(
+                'Login',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
