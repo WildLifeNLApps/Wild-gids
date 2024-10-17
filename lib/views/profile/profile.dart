@@ -139,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        await UserService().updateMyProfile(
+                        await UserService().updateProfile(
                           "",
                         );
                         setState(() {
@@ -152,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     TextButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          await UserService().updateMyProfile(
+                          await UserService().updateProfile(
                             _controller.text.trim(),
                           );
                           setState(() {
