@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:wildgids/models/services/auth.dart';
 import 'package:wildgids/views/login/verfication.dart';
@@ -14,10 +12,10 @@ class LoginPage extends StatefulWidget {
   });
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
@@ -82,8 +80,6 @@ class _LoginPageState extends State<LoginPage> {
                     if (_formKey.currentState!.validate()) {
                       final email = _emailController.text;
 
-                      await widget.authService.authenticate(email, "");
-
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -93,6 +89,8 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       );
+
+                      await widget.authService.authenticate(email, "");
                     }
                   },
                   child: const Text('Send code'),

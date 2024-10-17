@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:wildgids/app.dart';
 import 'package:wildgids/models/services/auth.dart';
@@ -16,10 +14,10 @@ class VerificationPage extends StatefulWidget {
   });
 
   @override
-  _VerificationPageState createState() => _VerificationPageState();
+  VerificationPageState createState() => VerificationPageState();
 }
 
-class _VerificationPageState extends State<VerificationPage> {
+class VerificationPageState extends State<VerificationPage> {
   final List<TextEditingController> _controllers =
       List.generate(6, (_) => TextEditingController());
   final _formKey = GlobalKey<FormState>();
@@ -115,14 +113,14 @@ class _VerificationPageState extends State<VerificationPage> {
                       .map((controller) => controller.text.trim())
                       .join();
 
-                  await widget.authService.authorize(widget.email, code);
-
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const Initializer(),
                     ),
                   );
+
+                  await widget.authService.authorize(widget.email, code);
                 }
               },
               style: ElevatedButton.styleFrom(

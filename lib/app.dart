@@ -66,7 +66,7 @@ class _InitializerState extends State<Initializer> {
             ),
           );
         } else if (snapshot.data != null && snapshot.data == true) {
-          return CustomScaffold(selectedIndex: 0, body: const Center());
+          return const CustomScaffold(selectedIndex: 0, body: Center());
         } else {
           return Scaffold(
             body: Center(

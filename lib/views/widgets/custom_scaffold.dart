@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors_in_immutables
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +8,7 @@ import 'package:wildgids/views/home/home.dart';
 import 'package:wildgids/views/profile/profile.dart';
 
 class CustomScaffold extends StatefulWidget {
-  CustomScaffold({
+  const CustomScaffold({
     super.key,
     required this.body,
     this.isAuthenticated = false,

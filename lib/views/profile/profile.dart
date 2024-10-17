@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:wildgids/models/services/user.dart';
 import 'package:wildlife_api_connection/models/user.dart';
@@ -8,16 +6,16 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> {
   User? _profile;
   bool _isLoading = true;
   String _errorMessage = "";
 
   final TextEditingController _controller = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -103,8 +101,10 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
         InkWell(
           onTap: () async {
+            final localContext = context; // Store context in a local variable
+
             showDialog(
-              context: context,
+              context: localContext,
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('Enter your name'),
@@ -124,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         RegExp regex = RegExp(pattern);
 
                         if (!regex.hasMatch(value)) {
-                          return 'Name cannot consist of number or characters';
+                          return 'Name cannot consist of numbers or special characters';
                         }
                         return null;
                       },
@@ -133,35 +133,35 @@ class _ProfilePageState extends State<ProfilePage> {
                   actions: <Widget>[
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(localContext).pop();
                       },
                       child: const Text('Cancel'),
                     ),
                     TextButton(
                       onPressed: () async {
+                        Navigator.of(context).pop();
                         await UserService().updateProfile(
                           "",
                         );
                         setState(() {
                           _fetchProfileInfo();
                         });
-                        Navigator.of(context).pop();
                       },
                       child: const Text('Remove name'),
                     ),
                     TextButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
+                          Navigator.of(context).pop();
                           await UserService().updateProfile(
                             _controller.text.trim(),
                           );
                           setState(() {
                             _fetchProfileInfo();
                           });
-                          Navigator.of(context).pop();
                         }
                       },
-                      child: const Text('OK'),
+                      child: const Text('Update name'),
                     ),
                   ],
                 );
