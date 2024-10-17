@@ -79,7 +79,9 @@ class LoginPageState extends State<LoginPage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final email = _emailController.text;
+                      await widget.authService.authenticate(email, "");
 
+                      if (!context.mounted) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -89,8 +91,6 @@ class LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       );
-
-                      await widget.authService.authenticate(email, "");
                     }
                   },
                   child: const Text('Send code'),

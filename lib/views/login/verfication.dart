@@ -112,15 +112,15 @@ class VerificationPageState extends State<VerificationPage> {
                   final code = _controllers
                       .map((controller) => controller.text.trim())
                       .join();
+                  await widget.authService.authorize(widget.email, code);
 
+                  if (!context.mounted) return;
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const Initializer(),
                     ),
                   );
-
-                  await widget.authService.authorize(widget.email, code);
                 }
               },
               style: ElevatedButton.styleFrom(

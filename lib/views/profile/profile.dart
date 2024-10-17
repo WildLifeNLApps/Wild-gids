@@ -29,7 +29,7 @@ class ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  Future<void> _fetchProfileInfo() async {
+  void _fetchProfileInfo() async {
     try {
       final profile = await UserService().getMyProfile();
       setState(() {
@@ -101,10 +101,8 @@ class ProfilePageState extends State<ProfilePage> {
         ],
         InkWell(
           onTap: () async {
-            final localContext = context; // Store context in a local variable
-
             showDialog(
-              context: localContext,
+              context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('Enter your name'),
@@ -133,32 +131,32 @@ class ProfilePageState extends State<ProfilePage> {
                   actions: <Widget>[
                     TextButton(
                       onPressed: () {
-                        Navigator.of(localContext).pop();
+                        Navigator.of(context).pop();
                       },
                       child: const Text('Cancel'),
                     ),
                     TextButton(
                       onPressed: () async {
-                        Navigator.of(context).pop();
                         await UserService().updateProfile(
                           "",
                         );
-                        setState(() {
-                          _fetchProfileInfo();
-                        });
+                        _fetchProfileInfo();
+
+                        if (!context.mounted) return;
+                        Navigator.of(context).pop();
                       },
                       child: const Text('Remove name'),
                     ),
                     TextButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          Navigator.of(context).pop();
                           await UserService().updateProfile(
                             _controller.text.trim(),
                           );
-                          setState(() {
-                            _fetchProfileInfo();
-                          });
+                          _fetchProfileInfo();
+
+                          if (!context.mounted) return;
+                          Navigator.of(context).pop();
                         }
                       },
                       child: const Text('Update name'),
